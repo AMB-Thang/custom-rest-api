@@ -82,10 +82,6 @@ class WC_API_Custom extends WC_API_Resource
 
     public function getshipping($param = array())
     {
-//        if (!class_exists('WC_Address_Book')) {
-//            return [];
-//        }
-
         $customerUser = isset($param['customer_user']) ? $param['customer_user'] : 0;
 
         $wc_address_book = WC_Address_Book::get_instance();
@@ -189,9 +185,7 @@ class WC_API_Custom extends WC_API_Resource
     public function calcuorder($data = array())
     {
         wp_set_current_user(1);
-
         $data['items'] = $data;
-
         $this->wp_add_order_fee($data);
 
         try {
@@ -361,23 +355,23 @@ class WC_API_Custom extends WC_API_Resource
 
         $page = isset($param['page']) && $param['page'] ? $param['page'] : 1;
         $userCount = get_users([
-                                   'search' => isset($param['name_mail_phone']) ? $param['name_mail_phone'] : '',
-                                   'search_columns' => [isset($param['type']) ? $param['type'] : ''],
-                                   'fields' => ['ID']
-                               ]);
+               'search' => isset($param['name_mail_phone']) ? $param['name_mail_phone'] : '',
+               'search_columns' => [isset($param['type']) ? $param['type'] : ''],
+               'fields' => ['ID']
+           ]);
         $totalUsers = count($userCount) ?: 1;
 
         $offset = $limit * ($page - 1);
         $totalPages = ceil($totalUsers / $limit);
 
         $users = get_users([
-                               'search' => isset($param['name_mail_phone']) ? $param['name_mail_phone'] : '',
-                               'search_columns' => [isset($param['type']) ? $param['type'] : ''],
-                               'fields' => ['ID', 'user_email', 'user_nicename'],
-                               'offset' => $offset,
-                               'number' => $limit,
-                               'order' => 'ASC'
-                           ]);
+               'search' => isset($param['name_mail_phone']) ? $param['name_mail_phone'] : '',
+               'search_columns' => [isset($param['type']) ? $param['type'] : ''],
+               'fields' => ['ID', 'user_email', 'user_nicename'],
+               'offset' => $offset,
+               'number' => $limit,
+               'order' => 'ASC'
+           ]);
 
         foreach ($users as $key => $user) {
             $response[$key]['id'] = $user->id;
@@ -402,10 +396,6 @@ class WC_API_Custom extends WC_API_Resource
         if (isset($param['term']) && $param['term']) {
             $term = (string)wc_clean(wp_unslash($param['term']));
         }
-
-//  if (empty($term)) {
-//    wp_die();
-//  }
 
         if (!empty($param['limit'])) {
             $limit = absint($param['limit']);
@@ -472,10 +462,6 @@ class WC_API_Custom extends WC_API_Resource
         if (empty($term) && isset($param['term'])) {
             $term = (string)wc_clean(wp_unslash($param['term']));
         }
-
-//  if (empty($term)) {
-//    wp_die();
-//  }
 
         if (!empty($param['limit'])) {
             $limit = absint($param['limit']);
@@ -626,9 +612,6 @@ class WC_API_Custom extends WC_API_Resource
         return $billing;
     }
 
-
-
-
     function add_address_book($param)
     {
         $wc_address_book = WC_Address_Book::get_instance();
@@ -643,8 +626,17 @@ class WC_API_Custom extends WC_API_Resource
         }
 
         $key = [
-            '_shipping_first_name', '_shipping_last_name', '_shipping_company', '_shipping_email', '_shipping_phone', '_shipping_address_1'
-            , '_shipping_address_2', '_shipping_city', '_shipping_state', '_shipping_postcode', '_shipping_country'
+            '_shipping_first_name',
+            '_shipping_last_name',
+            '_shipping_company',
+            '_shipping_email',
+            '_shipping_phone',
+            '_shipping_address_1',
+            '_shipping_address_2',
+            '_shipping_city',
+            '_shipping_state',
+            '_shipping_postcode',
+            '_shipping_country'
         ];
 
         foreach ($key as $val) {
@@ -847,13 +839,13 @@ class WC_API_Custom extends WC_API_Resource
             $item = new WC_Order_Item_Tax();
             $tax_rate_id = $val->tax_rate_id;
             $item->set_props([
-                                 'rate_id' => $tax_rate_id,
-                                 'tax_total' => $val->amount,
-                                 'rate_code' => WC_Tax::get_rate_code($tax_rate_id),
-                                 'label' => WC_Tax::get_rate_label($tax_rate_id),
-                                 'compound' => WC_Tax::is_compound($tax_rate_id),
-                                 'rate_percent' => WC_Tax::get_rate_percent_value($tax_rate_id)
-                             ]);
+                 'rate_id' => $tax_rate_id,
+                 'tax_total' => $val->amount,
+                 'rate_code' => WC_Tax::get_rate_code($tax_rate_id),
+                 'label' => WC_Tax::get_rate_label($tax_rate_id),
+                 'compound' => WC_Tax::is_compound($tax_rate_id),
+                 'rate_percent' => WC_Tax::get_rate_percent_value($tax_rate_id)
+             ]);
             $item->save();
             $order->add_item($item);
         }
