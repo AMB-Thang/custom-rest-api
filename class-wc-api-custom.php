@@ -6,8 +6,6 @@ use SkyVerge\WooCommerce\PluginFramework\v5_10_14 as Framework;
 
 class WC_API_Custom extends WC_API_Resource
 {
-    protected $base = '/custom';
-
     public function register_routes($routes)
     {
         $routes['/getuserdetail'] = array(
